@@ -111,6 +111,9 @@
     #define LULZBOT_EXTRUDER_OFFSET_X          {0.0, 0.00}
     #undef  LULZBOT_EXTRUDER_OFFSET_Y
     #define LULZBOT_EXTRUDER_OFFSET_Y          {0.0, 0.00}
+    #undef  LULZBOT_LCD_LINE_2
+    #define LULZBOT_LCD_LINE_2                 u8g.setFont(u8g_font_5x8); \
+                                               u8g.drawStr(95,17,"Dual");
     #define LULZBOT_UUID                       "c5077702-4ecd-4532-beaf-6acf94acc404"
     #define LULZBOT_X_MAX_ENDSTOP_INVERTING    true
     #define LULZBOT_X_MAX_POS                  288
