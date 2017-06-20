@@ -554,7 +554,7 @@ static void lcd_tune_menu()
       " 1"
     #endif
     , &extrudemultiply, 10, 999);
-#if EXTRUDER == 1
+#if EXTRUDERS == 1
     MENU_ITEM_EDIT(int3, MSG_FAN_SPEED, &fanSpeed, 0, 255);
 #endif
 //    MENU_ITEM_EDIT(int3, MSG_FLOW0, &extruder_multiply[0], 10, 999);
