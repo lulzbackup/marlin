@@ -2,6 +2,24 @@
 <img align="top" width=175 src="Documentation/Logo/Marlin%20Logo%20GitHub.png" />
  Additional documentation can be found in [The Marlin Wiki](https://github.com/MarlinFirmware/Marlin/wiki).
 
+## New branch: oliveoil-universal - 21 June, 2017:
+
+__Not for production use – use with caution!__
+
+A new "oliveoil-universal" branch supersedes the following branches:
+
+  * oliveoil
+  * oliveoil-flexy
+  * oliveoil-dually
+  * oliveoil-moar
+
+Specific configuration for individual LulzBot toolheads are now brought together in the "Configuration_LulzBot.h" file. All variants are build at once with the
+"build-all-taz-toolheads.sh" script.
+
+This new branch generates identical binaries for the 1.0.2.22 release as the non-universal
+branches, so at this time there is no need to switch over. All future oliveoil
+development will take place on this universal branch.
+
 ## Release Candidate -- Marlin 1.1.0-RCBugFix - 27 April 2016
 
 __Not for production use – use with caution!__
