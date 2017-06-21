@@ -535,7 +535,7 @@ void Config_ResetDefault()
     float tmp2[]=DEFAULT_MAX_FEEDRATE;
     long tmp3[]=DEFAULT_MAX_ACCELERATION;
   #if EXTRUDERS == 1
-    for (short i=0;i<4;i++)
+    for (short i=0;i<3+EXTRUDERS;i++)
     {
         axis_steps_per_unit[i]=tmp1[i];
         max_feedrate[i]=tmp2[i];
@@ -545,15 +545,10 @@ void Config_ResetDefault()
         #endif
     }
   #else
-    #if EXTRUDERS == 2
-    for (short i=0;i<5;i++)
-    #elif EXTRUDERS == 3
-    for (short i=0;i<6;i++)
-    #elif EXTRUDERS == 4
-    for (short i=0;i<7;i++)
-    #endif
+    for (short i=0;i<3+EXTRUDERS;i++) {
         axis_steps_per_unit[i]=tmp1[i];
-    for (short i=0;i<4;i++) {
+    }
+    for (short i=0;i<3+1;i++) {
         max_feedrate[i]=tmp2[i];
         max_acceleration_units_per_sq_second[i]=tmp3[i];
         #ifdef SCARA
