@@ -536,28 +536,31 @@ void Config_ResetDefault()
     long tmp3[]=DEFAULT_MAX_ACCELERATION;
   #if EXTRUDERS == 1
     for (short i=0;i<4;i++)
-  #elif EXTRUDERS == 2
-    for (short i=0;i<5;i++)
-  #elif EXTRUDERS == 3
-    for (short i=0;i<6;i++)
-  #elif EXTRUDERS == 4
-    for (short i=0;i<7;i++)
-  #endif
     {
         axis_steps_per_unit[i]=tmp1[i];
-        #if EXTRUDERS > 1
-        if(i<4)
-        {
-        #endif
-            max_feedrate[i]=tmp2[i];
-            max_acceleration_units_per_sq_second[i]=tmp3[i];
-            #ifdef SCARA
-                axis_scaling[i]=1;
-            #endif
-        #if EXTRUDERS > 1
-        }
+        max_feedrate[i]=tmp2[i];
+        max_acceleration_units_per_sq_second[i]=tmp3[i];
+        #ifdef SCARA
+            axis_scaling[i]=1;
         #endif
     }
+  #else
+    #if EXTRUDERS == 2
+    for (short i=0;i<5;i++)
+    #elif EXTRUDERS == 3
+    for (short i=0;i<6;i++)
+    #elif EXTRUDERS == 4
+    for (short i=0;i<7;i++)
+    #endif
+        axis_steps_per_unit[i]=tmp1[i];
+    for (short i=0;i<4;i++) {
+        max_feedrate[i]=tmp2[i];
+        max_acceleration_units_per_sq_second[i]=tmp3[i];
+        #ifdef SCARA
+            axis_scaling[i]=1;
+        #endif
+    }
+  #endif
 
     // steps per sq second need to be updated to agree with the units per sq second
     reset_acceleration_rates();
