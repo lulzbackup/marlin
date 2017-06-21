@@ -1,11 +1,14 @@
 #!/bin/sh
 
+#Uncomment following line to generate binaries without timestamps
+#MAKEOPTS="-f Makefile-with-no-timestamp"
+
 rm -rf build
 mkdir build
 for toolhead in Single Flexy Moar Dually GunnisonDual
 do
   make clean
-  make TOOLHEAD=$toolhead || exit
+  make $MAKEOPTS TOOLHEAD=$toolhead || exit
   mv *.hex build
 done
 
