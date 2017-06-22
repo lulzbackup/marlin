@@ -31,20 +31,23 @@
  */
 
 // Shared values
-#define LULZBOT_DEFAULT_ACCELERATION       500
-#define LULZBOT_FAN_PIN                    8
-#define LULZBOT_EXTRUDERS                  1
-#define LULZBOT_EXTRUDER_OFFSET_X          {0.0, 0.00}
-#define LULZBOT_EXTRUDER_OFFSET_Y          {0.0, -52.00}
-#define LULZBOT_Z_SAFE_HOMING_X_POINT      (-19)
-#define LULZBOT_Z_SAFE_HOMING_Y_POINT      (258)
-#define LULZBOT_Z_RAISE_BEFORE_HOMING      5
-#define LULZBOT_LCD_LINE_1                 u8g.setFont(u8g_font_6x10_marlin); \
-                                           u8g.drawStr(61,17,"TAZ 6");
-#define LULZBOT_LCD_LINE_2                 u8g.setFont(u8g_font_5x8); \
-                                           u8g.drawStr(95,17,"Single");
-#define LULZBOT_LCD_LINE_3                 u8g.setFont(u8g_font_6x10_marlin); \
-                                           u8g.drawStr(62,28,"3D Printer");
+#define LULZBOT_DEFAULT_ACCELERATION          500
+#define LULZBOT_FAN_PIN                       8
+#define LULZBOT_EXTRUDERS                     1
+#define LULZBOT_EXTRUDER_OFFSET_X             {0.0, 0.00}
+#define LULZBOT_EXTRUDER_OFFSET_Y             {0.0, -52.00}
+#define LULZBOT_Z_SAFE_HOMING_X_POINT         (-19)
+#define LULZBOT_Z_SAFE_HOMING_Y_POINT         (258)
+#define LULZBOT_Z_RAISE_BEFORE_HOMING         5
+#define LULZBOT_Z_RAISE_BEFORE_PROBING        5
+#define LULZBOT_Z_RAISE_BETWEEN_PROBINGS      5
+#define LULZBOT_Z_RAISE_AFTER_HOMING          5
+#define LULZBOT_LCD_LINE_1                    u8g.setFont(u8g_font_6x10_marlin); \
+                                              u8g.drawStr(61,17,"TAZ 6");
+#define LULZBOT_LCD_LINE_2                    u8g.setFont(u8g_font_5x8); \
+                                              u8g.drawStr(95,17,"Single");
+#define LULZBOT_LCD_LINE_3                    u8g.setFont(u8g_font_6x10_marlin); \
+                                              u8g.drawStr(62,28,"3D Printer");
 
 #if defined(TOOLHEAD_Single)
     #define LULZBOT_TOOLHEAD_VER               VERSION_STRING
@@ -116,26 +119,30 @@
                                                u8g.drawStr(95,17,"Dual");
     #define LULZBOT_UUID                       "c5077702-4ecd-4532-beaf-6acf94acc404"
     #define LULZBOT_X_MAX_ENDSTOP_INVERTING    true
-    #define LULZBOT_X_MAX_POS                  288
-    #define LULZBOT_X_MIN_POS                  -22
-    #define LULZBOT_Y_MAX_POS                  303     // Travel limits after homing
-    #define LULZBOT_Y_MIN_POS                  -20     // Travel limits after homing
-    #define LULZBOT_Z_MAX_POS                  270     // Travel limits after homing
-    #define LULZBOT_Z_MIN_POS                    0     // Travel limits after homing
+    #define LULZBOT_X_MAX_POS                     288
+    #define LULZBOT_X_MIN_POS                     -22
+    #define LULZBOT_Y_MAX_POS                     303     // Travel limits after homing
+    #define LULZBOT_Y_MIN_POS                     -20     // Travel limits after homing
+    #define LULZBOT_Z_MAX_POS                     270     // Travel limits after homing
+    #define LULZBOT_Z_MIN_POS                       0     // Travel limits after homing
     #define LULZBOT_AO_Hexagon
 #endif /* TOOLHEAD_Dually || TOOLHEAD_GunnisonDual */
 
 #if defined(TOOLHEAD_GunnisonDual)
-    #define LULZBOT_FAN_PIN                    6
-    #define LULZBOT_X_MAX_ENDSTOP_INVERTING    true   // Gunnison toolhead has a normally closed endstop
-    #undef  LULZBOT_Z_MIN_POS
-    #define LULZBOT_Z_MIN_POS                  6.5    // Account for raised button shipped with Gunnison toolhead
+    #define LULZBOT_FAN_PIN                         6
+    #define LULZBOT_X_MAX_ENDSTOP_INVERTING     false   // Gunnison toolhead has a normally closed endstop
     #undef  LULZBOT_Z_RAISE_BEFORE_HOMING
-    #define LULZBOT_Z_RAISE_BEFORE_HOMING      15
+    #define LULZBOT_Z_RAISE_BEFORE_HOMING          15
+    #undef  LULZBOT_Z_RAISE_BEFORE_PROBING
+    #define LULZBOT_Z_RAISE_BEFORE_PROBING         15
+    #undef  LULZBOT_Z_RAISE_BETWEEN_PROBINGS
+    #define LULZBOT_Z_RAISE_BETWEEN_PROBINGS       15
+    #undef  LULZBOT_Z_RAISE_AFTER_HOMING
+    #define LULZBOT_Z_RAISE_AFTER_HOMING           15
     #undef  LULZBOT_Z_SAFE_HOMING_X_POINT
     #undef  LULZBOT_Z_SAFE_HOMING_Y_POINT
-    #define LULZBOT_Z_SAFE_HOMING_X_POINT      (-22)    // X point for Z homing when homing all axis (G28)
-    #define LULZBOT_Z_SAFE_HOMING_Y_POINT      (260)    // Y point for Z homing when homing all axis (G28)
+    #define LULZBOT_Z_SAFE_HOMING_X_POINT        (-22)    // X point for Z homing when homing all axis (G28)
+    #define LULZBOT_Z_SAFE_HOMING_Y_POINT        (260)    // Y point for Z homing when homing all axis (G28)
     #define LULZBOT_AO_Hexagon
 #endif /* TOOLHEAD_GunnisonDual */
 
