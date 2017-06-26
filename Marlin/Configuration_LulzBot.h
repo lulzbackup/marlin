@@ -48,6 +48,10 @@
                                               u8g.drawStr(95,17,"Single");
 #define LULZBOT_LCD_LINE_3                    u8g.setFont(u8g_font_6x10_marlin); \
                                               u8g.drawStr(62,28,"3D Printer");
+#define LULZBOT_LEFT_PROBE_BED_POSITION       -9
+#define LULZBOT_RIGHT_PROBE_BED_POSITION     288
+#define LULZBOT_BACK_PROBE_BED_POSITION      289
+#define LULZBOT_FRONT_PROBE_BED_POSITION      -9
 
 #if defined(TOOLHEAD_Single)
     #define LULZBOT_TOOLHEAD_VER               VERSION_STRING
@@ -143,6 +147,16 @@
     #undef  LULZBOT_Z_SAFE_HOMING_Y_POINT
     #define LULZBOT_Z_SAFE_HOMING_X_POINT        (-22)    // X point for Z homing when homing all axis (G28)
     #define LULZBOT_Z_SAFE_HOMING_Y_POINT        (260)    // Y point for Z homing when homing all axis (G28)
+    // Try to adjust the probe points so only one head
+    // hits. Does this improve probe performance?
+    //#undef  LULZBOT_RIGHT_PROBE_BED_POSITION
+    //#define LULZBOT_RIGHT_PROBE_BED_POSITION     280
+    //#undef  LULZBOT_BACK_PROBE_BED_POSITION
+    //#define LULZBOT_BACK_PROBE_BED_POSITION      300
+    //#undef  LULZBOT_LEFT_PROBE_BED_POSITION
+    //#define LULZBOT_LEFT_PROBE_BED_POSITION       -6
+    #undef  LULZBOT_X_MAX_POS
+    #define LULZBOT_X_MAX_POS                      290
     #define LULZBOT_AO_Hexagon
 #endif /* TOOLHEAD_GunnisonDual */
 

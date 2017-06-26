@@ -396,10 +396,10 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // set to true to invert the logic o
   #ifdef AUTO_BED_LEVELING_GRID
 
     // set the rectangle in which to probe
-    #define LEFT_PROBE_BED_POSITION -9
-    #define RIGHT_PROBE_BED_POSITION 288
-    #define BACK_PROBE_BED_POSITION 289
-    #define FRONT_PROBE_BED_POSITION -9
+    #define LEFT_PROBE_BED_POSITION    LULZBOT_LEFT_PROBE_BED_POSITION
+    #define RIGHT_PROBE_BED_POSITION   LULZBOT_RIGHT_PROBE_BED_POSITION
+    #define BACK_PROBE_BED_POSITION    LULZBOT_BACK_PROBE_BED_POSITION
+    #define FRONT_PROBE_BED_POSITION   LULZBOT_FRONT_PROBE_BED_POSITION
 
      // set the number of grid points per dimension
      // I wouldn't see a reason to go above 3 (=9 probing points on the bed)
