@@ -5,7 +5,7 @@
     !defined(TOOLHEAD_Flexy) && \
     !defined(TOOLHEAD_Moar) && \
     !defined(TOOLHEAD_Dually) && \
-    !defined(TOOLHEAD_GunnisonDual)
+    !defined(TOOLHEAD_YellowfinDual)
 #error Must specify toolhead to build:
 #error
 #error   make clean
@@ -16,7 +16,7 @@
 #error      Flexy
 #error      Moar
 #error      Dually
-#error      GunnisonDual
+#error      YellowfinDual
 #endif
 
 /* We define the LULZBOT_ values based on which print head or printer variants we are compiling for,
@@ -52,6 +52,9 @@
 #define LULZBOT_RIGHT_PROBE_BED_POSITION     288
 #define LULZBOT_BACK_PROBE_BED_POSITION      289
 #define LULZBOT_FRONT_PROBE_BED_POSITION      -9
+#define LULZBOT_REWIPE_X_POSITION            -16
+#define LULZBOT_REWIPE_BACK_POSITION          95
+#define LULZBOT_REWIPE_FRONT_POSITION         25
 
 #if defined(TOOLHEAD_Single)
     #define LULZBOT_TOOLHEAD_VER               VERSION_STRING
@@ -106,7 +109,7 @@
     #define LULZBOT_Moarstruder
 #endif /* TOOLHEAD_Moar */
 
-#if defined(TOOLHEAD_Dually) || defined(TOOLHEAD_GunnisonDual)
+#if defined(TOOLHEAD_Dually) || defined(TOOLHEAD_YellowfinDual)
     #define LULZBOT_TOOLHEAD_VER               VERSION_STRING" Dual"
     #define LULZBOT_BUILD_VERSION              " LulzBot Dual"
     #undef  LULZBOT_FAN_PIN
@@ -130,11 +133,18 @@
     #define LULZBOT_Z_MAX_POS                     270     // Travel limits after homing
     #define LULZBOT_Z_MIN_POS                       0     // Travel limits after homing
     #define LULZBOT_AO_Hexagon
-#endif /* TOOLHEAD_Dually || TOOLHEAD_GunnisonDual */
+#endif /* TOOLHEAD_Dually || TOOLHEAD_YellowfinDual */
 
-#if defined(TOOLHEAD_GunnisonDual)
+#if defined(TOOLHEAD_Dually)
+    #undef  LULZBOT_REWIPE_FRONT_POSITION
+    #define LULZBOT_REWIPE_FRONT_POSITION          73
+#endif /* TOOLHEAD_Dually */
+
+#if defined(TOOLHEAD_YellowfinDual)
     #define LULZBOT_FAN_PIN                         6
-    #define LULZBOT_X_MAX_ENDSTOP_INVERTING     false   // Gunnison toolhead has a normally closed endstop
+    #undef  LULZBOT_REWIPE_X_POSITION
+    #define LULZBOT_REWIPE_X_POSITION             -18
+    #define LULZBOT_X_MAX_ENDSTOP_INVERTING     false   // Yellowfin toolhead has a normally closed endstop
     #undef  LULZBOT_Z_RAISE_BEFORE_HOMING
     #define LULZBOT_Z_RAISE_BEFORE_HOMING          15
     #undef  LULZBOT_Z_RAISE_BEFORE_PROBING
@@ -147,18 +157,10 @@
     #undef  LULZBOT_Z_SAFE_HOMING_Y_POINT
     #define LULZBOT_Z_SAFE_HOMING_X_POINT        (-22)    // X point for Z homing when homing all axis (G28)
     #define LULZBOT_Z_SAFE_HOMING_Y_POINT        (260)    // Y point for Z homing when homing all axis (G28)
-    // Try to adjust the probe points so only one head
-    // hits. Does this improve probe performance?
-    //#undef  LULZBOT_RIGHT_PROBE_BED_POSITION
-    //#define LULZBOT_RIGHT_PROBE_BED_POSITION     280
-    //#undef  LULZBOT_BACK_PROBE_BED_POSITION
-    //#define LULZBOT_BACK_PROBE_BED_POSITION      300
-    //#undef  LULZBOT_LEFT_PROBE_BED_POSITION
-    //#define LULZBOT_LEFT_PROBE_BED_POSITION       -6
     #undef  LULZBOT_X_MAX_POS
     #define LULZBOT_X_MAX_POS                      290
     #define LULZBOT_AO_Hexagon
-#endif /* TOOLHEAD_GunnisonDual */
+#endif /* TOOLHEAD_YellowfinDual */
 
 /* HOTEND Variants */
 
