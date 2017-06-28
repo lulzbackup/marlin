@@ -2059,6 +2059,15 @@ void process_commands()
           planner_disabled_below_z = current_position[Z_AXIS];
       }
       #endif
+
+      #ifdef LULZBOT_AFTER_Z_PROBE_CMD
+        /* In the case of the Yellowfin print head, do an
+           extra cmd right after Z home to correct for
+           the raised homing button */
+        if(home_all_axis || code_seen(axis_codes[Z_AXIS])) {
+          enquecommand(LULZBOT_AFTER_Z_PROBE_CMD);
+        }
+      #endif
       break;
 
 #ifdef ENABLE_AUTO_BED_LEVELING

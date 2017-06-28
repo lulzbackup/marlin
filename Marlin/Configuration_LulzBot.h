@@ -141,6 +141,7 @@
 #endif /* TOOLHEAD_Dually */
 
 #if defined(TOOLHEAD_YellowfinDual)
+    #define LULZBOT_AFTER_Z_PROBE_CMD               "G92 Z17.5" // Correction for raised homing button
     #define LULZBOT_FAN_PIN                         6
     #undef  LULZBOT_REWIPE_X_POSITION
     #define LULZBOT_REWIPE_X_POSITION             -18
