@@ -144,7 +144,7 @@
     #define LULZBOT_AFTER_Z_PROBE_CMD               "G92 Z17.5" // Correction for raised homing button
     #define LULZBOT_FAN_PIN                         6
     #undef  LULZBOT_REWIPE_X_POSITION
-    #define LULZBOT_REWIPE_X_POSITION             -18
+    #define LULZBOT_REWIPE_X_POSITION             -22
     #define LULZBOT_X_MAX_ENDSTOP_INVERTING     false   // Yellowfin toolhead has a normally closed endstop
     #undef  LULZBOT_Z_RAISE_BEFORE_HOMING
     #define LULZBOT_Z_RAISE_BEFORE_HOMING          15
