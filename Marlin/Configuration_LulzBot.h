@@ -2,21 +2,21 @@
 #define CONFIGURATION_LULZBOT
 
 #if !defined(TOOLHEAD_Single) && \
-    !defined(TOOLHEAD_Flexy) && \
-    !defined(TOOLHEAD_Moar) && \
-    !defined(TOOLHEAD_Dually) && \
-    !defined(TOOLHEAD_YellowfinDual)
+    !defined(TOOLHEAD_Kanyu_Flexy) && \
+    !defined(TOOLHEAD_Opah_Moar) && \
+    !defined(TOOLHEAD_JaveLong_Dual) && \
+    !defined(TOOLHEAD_Yellowfin_Dual)
 #error Must specify toolhead to build:
 #error
 #error   make clean
 #error   make TOOLHEAD=<toolhead>
 #error
 #error   Choices:
-#error      Single
-#error      Flexy
-#error      Moar
-#error      Dually
-#error      YellowfinDual
+#error      Single             // Standard Extruder (TAZ Olive)
+#error      Kanyu_Flexy        // Flexystruder (Kanyu)
+#error      Opah_Moar          // Moarstruder (Opah)
+#error      JaveLong_Dual      // Dual v2 (Javelin) or DualFlexy (Longfin)
+#error      Yellowfin_Dual     // Dual v3 (Yellowfin)
 #endif
 
 /* We define the LULZBOT_ values based on which print head or printer variants we are compiling for,
@@ -71,7 +71,7 @@
     #define LULZBOT_AO_Hexagon
 #endif /* TOOLHEAD_Single */
 
-#if defined(TOOLHEAD_Flexy)
+#if defined(TOOLHEAD_Kanyu_Flexy)
     #define LULZBOT_TOOLHEAD_VER               VERSION_STRING" Flexystruder"
     #define LULZBOT_BUILD_VERSION              " LulzBot Flexy"
     #define LULZBOT_DIGIPOT_MOTOR_CURRENT      {175,175,200,67,135}
@@ -87,9 +87,9 @@
     #define LULZBOT_Z_MAX_POS                  270
     #define LULZBOT_Z_MIN_POS                    0
     #define LULZBOT_AO_Hexagon
-#endif /* TOOLHEAD_Flexy */
+#endif /* TOOLHEAD_Kanyu_Flexy */
 
-#if defined(TOOLHEAD_Moar)
+#if defined(TOOLHEAD_Opah_Moar)
     #define LULZBOT_TOOLHEAD_VER               VERSION_STRING
     #define LULZBOT_BUILD_VERSION              " LulzBot MOAR"
     #undef  LULZBOT_DEFAULT_ACCELERATION
@@ -107,9 +107,9 @@
     #define LULZBOT_Z_MAX_POS                  270     // Travel limits after homing
     #define LULZBOT_Z_MIN_POS                    0     // Travel limits after homing
     #define LULZBOT_Moarstruder
-#endif /* TOOLHEAD_Moar */
+#endif /* TOOLHEAD_Opah_Moar */
 
-#if defined(TOOLHEAD_Dually) || defined(TOOLHEAD_YellowfinDual)
+#if defined(TOOLHEAD_JaveLong_Dual) || defined(TOOLHEAD_Yellowfin_Dual)
     #define LULZBOT_TOOLHEAD_VER               VERSION_STRING" Dual"
     #define LULZBOT_BUILD_VERSION              " LulzBot Dual"
     #undef  LULZBOT_FAN_PIN
@@ -133,27 +133,21 @@
     #define LULZBOT_Z_MAX_POS                     270     // Travel limits after homing
     #define LULZBOT_Z_MIN_POS                       0     // Travel limits after homing
     #define LULZBOT_AO_Hexagon
-#endif /* TOOLHEAD_Dually || TOOLHEAD_YellowfinDual */
+#endif /* TOOLHEAD_JaveLong_Dual || TOOLHEAD_Yellowfin_Dual */
 
-#if defined(TOOLHEAD_Dually)
+#if defined(TOOLHEAD_JaveLong_Dual)
     #undef  LULZBOT_REWIPE_FRONT_POSITION
     #define LULZBOT_REWIPE_FRONT_POSITION          73
-#endif /* TOOLHEAD_Dually */
+#endif /* TOOLHEAD_JaveLong_Dual */
 
-#if defined(TOOLHEAD_YellowfinDual)
-    #define LULZBOT_AFTER_Z_PROBE_CMD               "G92 Z17.5" // Correction for raised homing button
+#if defined(TOOLHEAD_Yellowfin_Dual)
+    #define LULZBOT_AFTER_Z_PROBE_CMD               "G92 Z15.5" // Correction for raised homing button
     #define LULZBOT_FAN_PIN                         6
     #undef  LULZBOT_REWIPE_X_POSITION
     #define LULZBOT_REWIPE_X_POSITION             -22
     #define LULZBOT_X_MAX_ENDSTOP_INVERTING     false   // Yellowfin toolhead has a normally closed endstop
     #undef  LULZBOT_Z_RAISE_BEFORE_HOMING
-    #define LULZBOT_Z_RAISE_BEFORE_HOMING          15
-    #undef  LULZBOT_Z_RAISE_BEFORE_PROBING
-    #define LULZBOT_Z_RAISE_BEFORE_PROBING         15
-    #undef  LULZBOT_Z_RAISE_BETWEEN_PROBINGS
-    #define LULZBOT_Z_RAISE_BETWEEN_PROBINGS       15
-    #undef  LULZBOT_Z_RAISE_AFTER_HOMING
-    #define LULZBOT_Z_RAISE_AFTER_HOMING           15
+    #define LULZBOT_Z_RAISE_BEFORE_HOMING          10
     #undef  LULZBOT_Z_SAFE_HOMING_X_POINT
     #undef  LULZBOT_Z_SAFE_HOMING_Y_POINT
     #define LULZBOT_Z_SAFE_HOMING_X_POINT        (-22)    // X point for Z homing when homing all axis (G28)
@@ -161,7 +155,7 @@
     #undef  LULZBOT_X_MAX_POS
     #define LULZBOT_X_MAX_POS                      290
     #define LULZBOT_AO_Hexagon
-#endif /* TOOLHEAD_YellowfinDual */
+#endif /* TOOLHEAD_Yellowfin_Dual */
 
 /* HOTEND Variants */
 

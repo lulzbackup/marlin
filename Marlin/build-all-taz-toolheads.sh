@@ -5,7 +5,7 @@
 
 rm -rf build
 mkdir build
-for toolhead in Single Flexy Moar Dually YellowfinDual
+for toolhead in Single Kanyu_Flexy Opah_Moar JaveLong_Dual Yellowfin_Dual
 do
   make clean
   make $MAKEOPTS TOOLHEAD=$toolhead || exit
