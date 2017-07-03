@@ -38,7 +38,8 @@ coresdir = ${hardwdir}/rambo/cores/arduino
 avrdir = ${hardwdir}/tools/avr/bin
 
 DEST ?= ${basedir}
-MACHINE = $(shell git rev-parse --abbrev-ref HEAD)-${TOOLHEAD}
+#MACHINE = $(shell git rev-parse --abbrev-ref HEAD)-${TOOLHEAD}
+MACHINE = oliveoil_${TOOLHEAD}
 NOW = $(shell date +"%b_%d_%y")
 VERSION = v$(shell grep -oP "\"1.*.*\"" ${basedir}/Default_Version.h | cut -d \" -f 2)
 HASH = $(shell git rev-parse --verify HEAD --short)
