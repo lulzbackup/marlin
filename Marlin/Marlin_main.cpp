@@ -3157,10 +3157,9 @@ Sigma_Exit:
           if(bedtemp > BED_MAXTEMP)
             bedtemp = BED_MAXTEMP;
           setTargetBed(bedtemp);
-          if(degTargetBed() > degBed())
-            LCD_MESSAGEPGM(MSG_BED_HEATING);
-          else
-            LCD_MESSAGEPGM(MSG_BED_COOLING);
+          if(isCoolingBed()) {
+            return; // If cooling, don't wait
+          }
           CooldownNoWait = true;
         } else if (code_seen('R')) {
           uint8_t bedtemp = code_value();
@@ -3171,8 +3170,14 @@ Sigma_Exit:
         }
         codenum = millis();
 
+        if(degTargetBed() > degBed())
+          LCD_MESSAGEPGM(MSG_BED_HEATING);
+        else
+          LCD_MESSAGEPGM(MSG_BED_COOLING);
+
         cancel_heatup = false;
         target_direction = isHeatingBed(); // true if heating, false if cooling
+
         #ifdef TEMP_RESIDENCY_TIME
           long residencyBedStart;
           residencyBedStart = -1;
