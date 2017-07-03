@@ -5,7 +5,7 @@
 
 rm -rf build
 mkdir build
-for toolhead in Single Kanyu_Flexystruder Opah_Moarstruder Javelin_Dual Longfin_FlexyDually Yellowfin_Dual Angelfish_Aero
+for toolhead in Oliveoil_SingleExtruder Kanyu_Flexystruder Opah_Moarstruder Javelin_DualExtruder Longfin_FlexyDually Yellowfin_DualExtruder Angelfish_Aero
 do
   make clean
   make $MAKEOPTS TOOLHEAD=$toolhead || exit

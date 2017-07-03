@@ -1,12 +1,12 @@
 #ifndef CONFIGURATION_LULZBOT
 #define CONFIGURATION_LULZBOT
 
-#if !defined(TOOLHEAD_Single) && \
+#if !defined(TOOLHEAD_Oliveoil_SingleExtruder) && \
     !defined(TOOLHEAD_Kanyu_Flexystruder) && \
     !defined(TOOLHEAD_Opah_Moarstruder) && \
-    !defined(TOOLHEAD_Javelin_Dual) && \
+    !defined(TOOLHEAD_Javelin_DualExtruder) && \
     !defined(TOOLHEAD_Longfin_FlexyDually) && \
-    !defined(TOOLHEAD_Yellowfin_Dual) && \
+    !defined(TOOLHEAD_Yellowfin_DualExtruder) && \
     !defined(TOOLHEAD_Angelfish_Aero)
 #error Must specify toolhead to build:
 #error
@@ -14,13 +14,13 @@
 #error   make TOOLHEAD=<toolhead>
 #error
 #error   Choices:
-#error      Single                // Standard Extruder (TAZ Olive)
-#error      Kanyu_Flexystruder    // Flexystruder (Kanyu)
-#error      Opah_Moarstruder      // Moarstruder (Opah)
-#error      Javelin_Dual          // Dual Extruder v2 (Javelin)
-#error      Longfin_FlexyDually   // FlexyDually (Longfin)
-#error      Yellowfin_Dual        // Dual Extruder v3 (Yellowfin)
-#error      Angelfish_Aero        // Titan AERO for TAZ
+#error      Oliveoil_SingleExtruder  // Standard Single Extruder (TAZ Olive)
+#error      Kanyu_Flexystruder       // Flexystruder (Kanyu)
+#error      Opah_Moarstruder         // Moarstruder (Opah)
+#error      Javelin_DualExtruder     // Dual Extruder v2 (Javelin)
+#error      Longfin_FlexyDually      // FlexyDually (Longfin)
+#error      Yellowfin_DualExtruder   // Dual Extruder v3 (Yellowfin)
+#error      Angelfish_Aero           // Titan AERO for TAZ
 #endif
 
 /* We define the LULZBOT_ values based on which print head or printer variants we are compiling for,
@@ -60,7 +60,7 @@
 #define LULZBOT_REWIPE_BACK_POSITION          95
 #define LULZBOT_REWIPE_FRONT_POSITION         25
 
-#if defined(TOOLHEAD_Single) || defined(TOOLHEAD_Angelfish_Aero)
+#if defined(TOOLHEAD_Oliveoil_SingleExtruder) || defined(TOOLHEAD_Angelfish_Aero)
     #define LULZBOT_TOOLHEAD_VER               VERSION_STRING
     #define LULZBOT_BUILD_VERSION              " LulzBot"
     #define LULZBOT_UUID                       "845f003c-aebd-4e53-a6b9-7d0984fde609"
@@ -72,12 +72,12 @@
     #define LULZBOT_Z_MAX_POS                  270     // Travel limits after homing
     #define LULZBOT_Z_MIN_POS                    0     // Travel limits after homing
     #define LULZBOT_AO_Hexagon
-#endif /* TOOLHEAD_Single || TOOLHEAD_Angelfish_Aero */
+#endif /* TOOLHEAD_Oliveoil_SingleExtruder || TOOLHEAD_Angelfish_Aero */
 
-#if defined(TOOLHEAD_Single)
+#if defined(TOOLHEAD_Oliveoil_SingleExtruder)
     #define LULZBOT_BUILD_VERSION              " LulzBot"
     #define LULZBOT_DIGIPOT_MOTOR_CURRENT      {175,175,200,135,135} // Values 0-255 (RAMBO 135 = ~0.75A, 185 = ~1A)
-#endif /* TOOLHEAD_Single */
+#endif /* TOOLHEAD_Oliveoil_SingleExtruder */
 
 #if defined(TOOLHEAD_Angelfish_Aero)
     #define LULZBOT_BUILD_VERSION              " LulzBot AERO"
@@ -125,7 +125,7 @@
     #define LULZBOT_Moarstruder
 #endif /* TOOLHEAD_Opah_Moarstruder */
 
-#if defined(TOOLHEAD_Javelin_Dual) || defined(TOOLHEAD_Longfin_FlexyDually) || defined(TOOLHEAD_Yellowfin_Dual)
+#if defined(TOOLHEAD_Javelin_DualExtruder) || defined(TOOLHEAD_Longfin_FlexyDually) || defined(TOOLHEAD_Yellowfin_DualExtruder)
     #define LULZBOT_TOOLHEAD_VER               VERSION_STRING" Dual"
     #define LULZBOT_BUILD_VERSION              " LulzBot Dual"
     #undef  LULZBOT_FAN_PIN
@@ -149,14 +149,14 @@
     #define LULZBOT_Z_MAX_POS                     270     // Travel limits after homing
     #define LULZBOT_Z_MIN_POS                       0     // Travel limits after homing
     #define LULZBOT_AO_Hexagon
-#endif /* TOOLHEAD_Javelin_Dual || TOOLHEAD_Longfin_FlexyDually || TOOLHEAD_Yellowfin_Dual */
+#endif /* TOOLHEAD_Javelin_DualExtruder || TOOLHEAD_Longfin_FlexyDually || TOOLHEAD_Yellowfin_DualExtruder */
 
-#if defined(TOOLHEAD_Javelin_Dual) || defined(TOOLHEAD_Longfin_FlexyDually)
+#if defined(TOOLHEAD_Javelin_DualExtruder) || defined(TOOLHEAD_Longfin_FlexyDually)
     #undef  LULZBOT_REWIPE_FRONT_POSITION
     #define LULZBOT_REWIPE_FRONT_POSITION          73
-#endif /* TOOLHEAD_Javelin_Dual || TOOLHEAD_Longfin_FlexyDually */
+#endif /* TOOLHEAD_Javelin_DualExtruder || TOOLHEAD_Longfin_FlexyDually */
 
-#if defined(TOOLHEAD_Yellowfin_Dual)
+#if defined(TOOLHEAD_Yellowfin_DualExtruder)
     #define LULZBOT_AFTER_Z_PROBE_CMD               "G92 Z15.5" // Correction for raised homing button
     #define LULZBOT_FAN_PIN                         6
     #undef  LULZBOT_REWIPE_X_POSITION
@@ -171,7 +171,7 @@
     #undef  LULZBOT_X_MAX_POS
     #define LULZBOT_X_MAX_POS                      290
     #define LULZBOT_AO_Hexagon
-#endif /* TOOLHEAD_Yellowfin_Dual */
+#endif /* TOOLHEAD_Yellowfin_DualExtruder */
 
 /* HOTEND Variants */
 
