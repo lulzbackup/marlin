@@ -5,7 +5,8 @@
     !defined(TOOLHEAD_Kanyu_Flexy) && \
     !defined(TOOLHEAD_Opah_Moar) && \
     !defined(TOOLHEAD_JaveLong_Dual) && \
-    !defined(TOOLHEAD_Yellowfin_Dual)
+    !defined(TOOLHEAD_Yellowfin_Dual) && \
+    !defined(TOOLHEAD_Angelfish_Aero)
 #error Must specify toolhead to build:
 #error
 #error   make clean
@@ -17,6 +18,7 @@
 #error      Opah_Moar          // Moarstruder (Opah)
 #error      JaveLong_Dual      // Dual v2 (Javelin) or DualFlexy (Longfin)
 #error      Yellowfin_Dual     // Dual v3 (Yellowfin)
+#error      Angelfish_Aero     // Titan AERO for TAZ
 #endif
 
 /* We define the LULZBOT_ values based on which print head or printer variants we are compiling for,
@@ -56,10 +58,9 @@
 #define LULZBOT_REWIPE_BACK_POSITION          95
 #define LULZBOT_REWIPE_FRONT_POSITION         25
 
-#if defined(TOOLHEAD_Single)
+#if defined(TOOLHEAD_Single) || defined(TOOLHEAD_Angelfish_Aero)
     #define LULZBOT_TOOLHEAD_VER               VERSION_STRING
     #define LULZBOT_BUILD_VERSION              " LulzBot"
-    #define LULZBOT_DIGIPOT_MOTOR_CURRENT      {175,175,200,135,135} // Values 0-255 (RAMBO 135 = ~0.75A, 185 = ~1A)
     #define LULZBOT_UUID                       "845f003c-aebd-4e53-a6b9-7d0984fde609"
     #define LULZBOT_X_MAX_ENDSTOP_INVERTING    false
     #define LULZBOT_X_MAX_POS                  300     // Travel limits after homing
@@ -69,7 +70,20 @@
     #define LULZBOT_Z_MAX_POS                  270     // Travel limits after homing
     #define LULZBOT_Z_MIN_POS                    0     // Travel limits after homing
     #define LULZBOT_AO_Hexagon
+#endif /* TOOLHEAD_Single || TOOLHEAD_Angelfish_Aero */
+
+#if defined(TOOLHEAD_Single)
+    #define LULZBOT_BUILD_VERSION              " LulzBot"
+    #define LULZBOT_DIGIPOT_MOTOR_CURRENT      {175,175,200,135,135} // Values 0-255 (RAMBO 135 = ~0.75A, 185 = ~1A)
 #endif /* TOOLHEAD_Single */
+
+#if defined(TOOLHEAD_Angelfish_Aero)
+    #define LULZBOT_BUILD_VERSION              " LulzBot AERO"
+    #define LULZBOT_DIGIPOT_MOTOR_CURRENT      {175,175,200,160,160} // Values 0-255 (RAMBO 135 = ~0.75A, 185 = ~1A)
+    #undef  LULZBOT_LCD_LINE_2
+    #define LULZBOT_LCD_LINE_2                 u8g.setFont(u8g_font_5x8); \
+                                               u8g.drawStr(95,17,"AERO");
+#endif /* TOOLHEAD_Angelfish_Aero */
 
 #if defined(TOOLHEAD_Kanyu_Flexy)
     #define LULZBOT_TOOLHEAD_VER               VERSION_STRING" Flexystruder"
