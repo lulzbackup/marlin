@@ -3158,7 +3158,7 @@ Sigma_Exit:
             bedtemp = BED_MAXTEMP;
           setTargetBed(bedtemp);
           if(isCoolingBed()) {
-            return; // If cooling, don't wait
+            break; // If cooling, don't wait
           }
           CooldownNoWait = true;
         } else if (code_seen('R')) {
