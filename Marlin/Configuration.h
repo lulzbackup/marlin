@@ -38,6 +38,8 @@
 #ifndef CONFIGURATION_H
 #define CONFIGURATION_H
 
+#include "Configuration_LulzBot.h"
+
 #include "boards.h"
 #include "macros.h"
 
@@ -704,7 +706,19 @@ const bool Z_MIN_PROBE_ENDSTOP_INVERTING = true; // set to true to invert the lo
 
 // default settings
 
+#ifdef LULZBOT_Z_BELT_MINI
+#define Z_FULL_STEPS_PER_ROTATION 200
+#define Z_MICROSTEPS 16
+#define Z_BELT_PITCH 2
+#define Z_PULLEY_TEETH 24
+
+// delta speeds must be the same on xyz
+#define Z_STEPS (Z_FULL_STEPS_PER_ROTATION * Z_MICROSTEPS / double(Z_BELT_PITCH) / double(Z_PULLEY_TEETH))
+#define DEFAULT_AXIS_STEPS_PER_UNIT   {100.5,100.5,Z_STEPS,833}  // default steps per unit for LulzBot Mini
+#else
 #define DEFAULT_AXIS_STEPS_PER_UNIT   {100.5,100.5,1600,833}  // default steps per unit for LulzBot Mini
+#endif
+
 #define DEFAULT_MAX_FEEDRATE          {800, 800, 8, 40}    // (mm/sec)
 #define DEFAULT_MAX_ACCELERATION      {9000,9000,100,1000}    // X, Y, Z, E maximum start speed for accelerated moves. E default values are good for Skeinforge 40+, for older versions raise them a lot.
 
