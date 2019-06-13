@@ -30,16 +30,27 @@
  *    3 - perform block range checking
  *    4 - print each block access
  */
-#define USB_DEBUG         1
+#define USB_DEBUG         2
 #define USB_STARTUP_DELAY 0
 
 #if ENABLED(USB_FLASH_DRIVE_SUPPORT)
 
 #include "../../Marlin.h"
 #include "../../core/serial.h"
+#include "../../module/temperature.h"
 
-#include "lib/Usb.h"
-#include "lib/masstorage.h"
+#define LOAD_USB_HOST_SYSTEM
+#define LOAD_USB_HOST_SHIELD
+#define LOAD_UHS_BULK_STORAGE
+
+#define NO_AUTO_SPEED
+#define UHS_MAX3421E_SPD SPI_SPEED
+#define UHS_DEVICE_WINDOWS_USB_SPEC_VIOLATION_DESCRIPTOR_DEVICE 1
+#define UHS_HOST_MAX_INTERFACE_DRIVERS 2
+#define MASS_MAX_SUPPORTED_LUN 1
+#define USB_HOST_SERIAL MYSERIAL0
+
+#include "lib/UHS_host/UHS_host.h"
 
 #include "Sd2Card_FlashDrive.h"
 
@@ -50,8 +61,8 @@
 static_assert(USB_CS_PIN   != -1, "USB_CS_PIN must be defined");
 static_assert(USB_INTR_PIN != -1, "USB_INTR_PIN must be defined");
 
-USB usb;
-BulkOnly bulk(&usb);
+MAX3421E_HOST usb(USB_CS_PIN, USB_INTR_PIN);
+UHS_Bulk_Storage bulk(&usb);
 
 static enum {
   UNINITIALIZED,
@@ -69,7 +80,7 @@ static enum {
 bool Sd2Card::usbStartup() {
   if(state <= DO_STARTUP) {
     SERIAL_ECHOPGM("Starting USB host...");
-    if (!usb.start()) {
+    if (usb.Init() != 0) {
       SERIAL_ECHOLNPGM(" failed.");
       #if EITHER(ULTRA_LCD, EXTENSIBLE_UI)
         LCD_MESSAGEPGM("USB start failed");
@@ -100,10 +111,28 @@ void Sd2Card::idle() {
   const uint8_t task_state = usb.getUsbTaskState();
 
   #if USB_DEBUG >= 2
-    static uint8_t last_task_state = 0xFF;
-    if(last_task_state != task_state) {
-      last_task_state = task_state;
-      SERIAL_ECHOLNPAIR("USB Task State:", task_state);
+    if(state > DO_STARTUP) {
+      static uint8_t laststate = 232;
+      const uint8_t usbstate = usb.getUsbTaskState();
+      if(usbstate != laststate) {
+        laststate = usbstate;
+        #define UHS_USB_DEBUG(x) case x: SERIAL_ECHOLNPGM(#x); break
+        switch(usbstate) {
+          UHS_USB_DEBUG(UHS_USB_HOST_STATE_IDLE);
+          UHS_USB_DEBUG(UHS_USB_HOST_STATE_RESET_DEVICE);
+          UHS_USB_DEBUG(UHS_USB_HOST_STATE_RESET_NOT_COMPLETE);
+          UHS_USB_DEBUG(UHS_USB_HOST_STATE_DEBOUNCE);
+          UHS_USB_DEBUG(UHS_USB_HOST_STATE_DEBOUNCE_NOT_COMPLETE);
+          UHS_USB_DEBUG(UHS_USB_HOST_STATE_WAIT_SOF);
+          UHS_USB_DEBUG(UHS_USB_HOST_STATE_ERROR);
+          UHS_USB_DEBUG(UHS_USB_HOST_STATE_CONFIGURING);
+          UHS_USB_DEBUG(UHS_USB_HOST_STATE_CONFIGURING_DONE);
+          UHS_USB_DEBUG(UHS_USB_HOST_STATE_RUNNING);
+          default:
+            SERIAL_ECHOLNPAIR("UHS_USB_HOST_STATE: ", usbstate);
+            break;
+        }
+      }
     }
   #endif
 
@@ -127,7 +156,7 @@ void Sd2Card::idle() {
         break;
 
       case WAIT_FOR_DEVICE:
-        if(task_state == USB_STATE_RUNNING) {
+        if(task_state == UHS_USB_HOST_STATE_RUNNING) {
           #if USB_DEBUG >= 1
             SERIAL_ECHOLNPGM("USB device inserted");
           #endif
@@ -141,7 +170,7 @@ void Sd2Card::idle() {
         if(bulk.LUNIsGood(0)) {
           GOTO_STATE_AFTER_DELAY( MEDIA_READY, 100 );
         } else {
-          #ifdef USB_DEBUG >= 1
+          #if USB_DEBUG >= 1
             SERIAL_ECHOLNPGM("Waiting for media");
           #endif
           GOTO_STATE_AFTER_DELAY(state, 2000);
@@ -156,8 +185,8 @@ void Sd2Card::idle() {
     }
 
     // Handle device removal events
-    if(state > WAIT_FOR_DEVICE && task_state != USB_STATE_RUNNING) {
-      #ifdef USB_DEBUG >= 1
+    if(state > WAIT_FOR_DEVICE && task_state != UHS_USB_HOST_STATE_RUNNING) {
+      #if USB_DEBUG >= 1
         SERIAL_ECHOLNPGM("USB device removed");
       #endif
       GOTO_STATE_AFTER_DELAY( WAIT_FOR_DEVICE, 0 );
@@ -165,7 +194,7 @@ void Sd2Card::idle() {
 
     // Handle media removal events
     if(state > WAIT_FOR_LUN && !bulk.LUNIsGood(0)) {
-      #ifdef USB_DEBUG >= 1
+      #if USB_DEBUG >= 1
         SERIAL_ECHOLNPGM("USB media removed");
       #endif
       GOTO_STATE_AFTER_DELAY( WAIT_FOR_DEVICE, 0 );

@@ -360,7 +360,7 @@
     #define LCD_480x272
     #define LULZBOT_SDSUPPORT
     #define LULZBOT_USB_FLASH_DRIVE_SUPPORT
-    //#define LULZBOT_MANUAL_USB_STARTUP
+    #define LULZBOT_MANUAL_USB_STARTUP
 #endif
 
 #if defined(LULZBOT_GladiolaTouchLCD_Experimental)
@@ -584,7 +584,6 @@
     #define LULZBOT_CONTROLLER_FAN_PIN            FAN1_PIN
     #define LULZBOT_SERIAL_PORT                   -1
     #define LULZBOT_SPI_SPEED                     SPI_SIXTEENTH_SPEED
-
     #define LULZBOT_USB_INTR_PIN                  SD_DETECT_PIN
 
     // Force Archim to use same USB ID as Mini-Rambo and Rambo when flashed
