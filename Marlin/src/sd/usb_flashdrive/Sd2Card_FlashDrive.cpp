@@ -50,6 +50,8 @@
 #define MASS_MAX_SUPPORTED_LUN 1
 #define USB_HOST_SERIAL MYSERIAL0
 
+#define LULZBOT_USB_NO_TEST_UNIT_READY
+
 #include "lib/UHS_host/UHS_host.h"
 
 #include "Sd2Card_FlashDrive.h"
