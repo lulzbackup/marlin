@@ -50,7 +50,12 @@
 #define MASS_MAX_SUPPORTED_LUN 1
 #define USB_HOST_SERIAL MYSERIAL0
 
+// Workarounds for keeping Marlin's watchdog timer from barking...
+void marlin_yield() {
+  thermalManager.manage_heater();
+}
 #define LULZBOT_USB_NO_TEST_UNIT_READY
+#define LULZBOT_SKIP_PAGE3F
 
 #include "lib/UHS_host/UHS_host.h"
 

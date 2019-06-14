@@ -346,6 +346,10 @@ public UHS_USB_HOST_BASE
                         bool running() {
                                 return countdown != 0;
                         }
+
+                        bool isAsleep() {
+                                return asleep;
+                        }
         } sof_timer;
 
         // TO-DO: move these into the parent class.
@@ -404,13 +408,18 @@ public:
         };
 
         virtual bool UHS_NI sof_delay(uint16_t x) {
+                const bool wasAsleep = sof_timer.isAsleep();
+                if(wasAsleep) sof_timer.wake();
                 sof_timer.set(x);
                 while(sof_timer.running() && !condet) {
+#if defined(__MARLIN_FIRMWARE__)
+                        marlin_yield();
+#endif
 #if !USB_HOST_SHIELD_USE_ISR
                         Task();
 #endif
                 }
-                //                Serial.println("...Wake");
+                if(wasAsleep) sof_timer.sleep();
                 return (!condet);
         };
 

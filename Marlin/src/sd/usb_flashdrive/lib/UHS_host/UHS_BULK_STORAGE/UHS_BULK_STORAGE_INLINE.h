@@ -590,7 +590,9 @@ bool UHS_NI UHS_Bulk_Storage::CheckLUN(uint8_t lun) {
                 return false;
         }
         if(!UHS_SLEEP_MS(20)) return false;
+        #ifndef LULZBOT_SKIP_PAGE3F
         Page3F(lun);
+        #endif
         if(!TestUnitReady(lun)) return true;
 
         return false;
@@ -817,7 +819,9 @@ uint8_t UHS_NI UHS_Bulk_Storage::ClearEpHalt(uint8_t index) {
         if(index != 0) {
                 uint8_t ep = (index == epDataInIndex) ? (0x80 | epInfo[index].epAddr) : epInfo[index].epAddr;
                 do {
+                        SERIAL_ECHOLNPGM(">>>  pUsb->EPClearHalt");
                         ret = pUsb->EPClearHalt(bAddress, ep);
+                        SERIAL_ECHOLNPGM("pUsb->EPClearHalt >>>");
                         if(!UHS_SLEEP_MS(6)) break;
                 } while(ret == 0x01);
 
