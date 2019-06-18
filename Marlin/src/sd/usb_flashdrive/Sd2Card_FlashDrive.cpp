@@ -181,8 +181,14 @@ void Sd2Card::idle() {
         if(bulk.LUNIsGood(0)) {
           GOTO_STATE_AFTER_DELAY( MEDIA_READY, 100 );
         } else {
+          // Make sure we catch disconnect events
+          usb.busprobe();
+          usb.VBUS_changed();
           #if USB_DEBUG >= 1
             SERIAL_ECHOLNPGM("Waiting for media");
+          #endif
+          #if EITHER(ULTRA_LCD, EXTENSIBLE_UI)
+            LCD_MESSAGEPGM("Waiting for media");
           #endif
           GOTO_STATE_AFTER_DELAY(state, 2000);
         }
@@ -200,15 +206,29 @@ void Sd2Card::idle() {
       #if USB_DEBUG >= 1
         SERIAL_ECHOLNPGM("USB device removed");
       #endif
+      #if EITHER(ULTRA_LCD, EXTENSIBLE_UI)
+        if(state != MEDIA_READY)
+          LCD_MESSAGEPGM("USB device removed");
+      #endif
       GOTO_STATE_AFTER_DELAY( WAIT_FOR_DEVICE, 0 );
     }
 
     else if(state > WAIT_FOR_LUN && !bulk.LUNIsGood(0)) {
       // Handle media removal events
       #if USB_DEBUG >= 1
-        SERIAL_ECHOLNPGM("USB media removed");
+        SERIAL_ECHOLNPGM("Media removed");
+      #endif
+      #if EITHER(ULTRA_LCD, EXTENSIBLE_UI)
+        LCD_MESSAGEPGM("Media removed");
       #endif
       GOTO_STATE_AFTER_DELAY( WAIT_FOR_DEVICE, 0 );
+    }
+
+    else if(task_state == UHS_USB_HOST_STATE_ERROR) {
+        #if EITHER(ULTRA_LCD, EXTENSIBLE_UI)
+          LCD_MESSAGEPGM("Media read error");
+        #endif
+        GOTO_STATE_AFTER_DELAY( MEDIA_ERROR, 0 );
     }
   }
 }
