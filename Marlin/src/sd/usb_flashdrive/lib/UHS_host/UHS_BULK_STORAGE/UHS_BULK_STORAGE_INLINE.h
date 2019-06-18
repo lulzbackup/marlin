@@ -456,8 +456,8 @@ uint8_t UHS_NI UHS_Bulk_Storage::Start(void) {
 
         for(uint8_t lun = 0; lun <= bMaxLUN; lun++) {
                 if(!UHS_SLEEP_MS(3)) goto FailUnPlug;
-                uint8_t tries = 0xf0;
                 #ifndef LULZBOT_USB_NO_TEST_UNIT_READY
+                uint8_t tries = 0xf0;
                 while((rcode = TestUnitReady(lun))) {
                         BS_HOST_DEBUG("\r\nTry %2.2x TestUnitReady %2.2x\r\n", tries - 0xf0, rcode);
                         if(rcode == 0x08) break; // break on no media, this is OK to do.
