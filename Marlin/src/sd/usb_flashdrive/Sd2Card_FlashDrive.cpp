@@ -30,7 +30,7 @@
  *    3 - perform block range checking
  *    4 - print each block access
  */
-#define USB_DEBUG         2
+#define USB_DEBUG         1
 #define USB_STARTUP_DELAY 0
 
 // uncomment to get 'printf' console debugging. NOT FOR UNO!
@@ -125,11 +125,10 @@ void Sd2Card::idle() {
   #if USB_DEBUG >= 2
     if(state > DO_STARTUP) {
       static uint8_t laststate = 232;
-      const uint8_t usbstate = usb.getUsbTaskState();
-      if(usbstate != laststate) {
-        laststate = usbstate;
+      if(task_state != laststate) {
+        laststate = task_state;
         #define UHS_USB_DEBUG(x) case x: SERIAL_ECHOLNPGM(#x); break
-        switch(usbstate) {
+        switch(task_state) {
           UHS_USB_DEBUG(UHS_USB_HOST_STATE_IDLE);
           UHS_USB_DEBUG(UHS_USB_HOST_STATE_RESET_DEVICE);
           UHS_USB_DEBUG(UHS_USB_HOST_STATE_RESET_NOT_COMPLETE);
@@ -141,7 +140,7 @@ void Sd2Card::idle() {
           UHS_USB_DEBUG(UHS_USB_HOST_STATE_CONFIGURING_DONE);
           UHS_USB_DEBUG(UHS_USB_HOST_STATE_RUNNING);
           default:
-            SERIAL_ECHOLNPAIR("UHS_USB_HOST_STATE: ", usbstate);
+            SERIAL_ECHOLNPAIR("UHS_USB_HOST_STATE: ", task_state);
             break;
         }
       }
@@ -196,16 +195,16 @@ void Sd2Card::idle() {
         break;
     }
 
-    // Handle device removal events
     if(state > WAIT_FOR_DEVICE && task_state != UHS_USB_HOST_STATE_RUNNING) {
+      // Handle device removal events
       #if USB_DEBUG >= 1
         SERIAL_ECHOLNPGM("USB device removed");
       #endif
       GOTO_STATE_AFTER_DELAY( WAIT_FOR_DEVICE, 0 );
     }
 
-    // Handle media removal events
-    if(state > WAIT_FOR_LUN && !bulk.LUNIsGood(0)) {
+    else if(state > WAIT_FOR_LUN && !bulk.LUNIsGood(0)) {
+      // Handle media removal events
       #if USB_DEBUG >= 1
         SERIAL_ECHOLNPGM("USB media removed");
       #endif
