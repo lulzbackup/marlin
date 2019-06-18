@@ -38,6 +38,7 @@ e-mail   :  support@circuitsathome.com
 #endif
 
 #endif
+#ifndef MAX_HOST_DEBUG
 #if DEBUG_PRINTF_EXTRA_HUGE
 #ifdef DEBUG_PRINTF_EXTRA_HUGE_USB_HOST_SHIELD
 #define MAX_HOST_DEBUG(...) printf(__VA_ARGS__)
@@ -46,6 +47,7 @@ e-mail   :  support@circuitsathome.com
 #endif
 #else
 #define MAX_HOST_DEBUG(...) VOID0
+#endif
 #endif
 
 #if !defined(USB_HOST_SHIELD_USE_ISR)

@@ -30,6 +30,7 @@ e-mail   :  support@circuitsathome.com
 // uncomment to get 'printf' console debugging. NOT FOR UNO!
 //#define DEBUG_PRINTF_EXTRA_HUGE_UHS_BULK_STORAGE
 
+#ifndef BS_HOST_DEBUG
 #if DEBUG_PRINTF_EXTRA_HUGE
 #ifdef DEBUG_PRINTF_EXTRA_HUGE_UHS_BULK_STORAGE
 #define BS_HOST_DEBUG(...) printf(__VA_ARGS__)
@@ -38,6 +39,7 @@ e-mail   :  support@circuitsathome.com
 #endif
 #else
 #define BS_HOST_DEBUG(...) VOID0
+#endif
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -819,9 +821,7 @@ uint8_t UHS_NI UHS_Bulk_Storage::ClearEpHalt(uint8_t index) {
         if(index != 0) {
                 uint8_t ep = (index == epDataInIndex) ? (0x80 | epInfo[index].epAddr) : epInfo[index].epAddr;
                 do {
-                        SERIAL_ECHOLNPGM(">>>  pUsb->EPClearHalt");
                         ret = pUsb->EPClearHalt(bAddress, ep);
-                        SERIAL_ECHOLNPGM("pUsb->EPClearHalt >>>");
                         if(!UHS_SLEEP_MS(6)) break;
                 } while(ret == 0x01);
 

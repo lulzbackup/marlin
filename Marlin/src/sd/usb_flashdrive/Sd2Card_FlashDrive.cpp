@@ -33,6 +33,11 @@
 #define USB_DEBUG         2
 #define USB_STARTUP_DELAY 0
 
+// uncomment to get 'printf' console debugging. NOT FOR UNO!
+//#define HOST_DEBUG(...)     {char s[255]; sprintf(s,__VA_ARGS__); SERIAL_ECHOLNPAIR("UHS:",s);}
+//#define BS_HOST_DEBUG(...)  {char s[255]; sprintf(s,__VA_ARGS__); SERIAL_ECHOLNPAIR("UHS:",s);}
+//#define MAX_HOST_DEBUG(...) {char s[255]; sprintf(s,__VA_ARGS__); SERIAL_ECHOLNPAIR("UHS:",s);}
+
 #if ENABLED(USB_FLASH_DRIVE_SUPPORT)
 
 #include "../../Marlin.h"

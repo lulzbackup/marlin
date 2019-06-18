@@ -31,6 +31,7 @@ e-mail   :  support@circuitsathome.com
 #define DEBUG_PRINTF_EXTRA_HUGE_UHS_HOST 0
 #endif
 
+#ifndef HOST_DEBUG
 #if DEBUG_PRINTF_EXTRA_HUGE
 #if DEBUG_PRINTF_EXTRA_HUGE_UHS_HOST
 #define HOST_DEBUG(...) printf(__VA_ARGS__)
@@ -39,6 +40,7 @@ e-mail   :  support@circuitsathome.com
 #endif
 #else
 #define HOST_DEBUG(...) VOID0
+#endif
 #endif
 
 UHS_EpInfo* UHS_USB_HOST_BASE::getEpInfoEntry(uint8_t addr, uint8_t ep) {

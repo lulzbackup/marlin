@@ -622,6 +622,12 @@ uint8_t UHS_NI MAX3421E_HOST::dispatchPkt(uint8_t token, uint8_t ep, uint16_t na
         uint8_t retry_count = 0;
         uint16_t nak_count = 0;
 
+        #if USB_HOST_NAK_LIMIT > 0
+                if(nak_limit <  USB_HOST_NAK_LIMIT) {
+                        nak_limit = USB_HOST_NAK_LIMIT;
+                }
+        #endif
+
         for(;;) {
                 regWr(rHXFR, (token | ep)); //launch the transfer
                 while((long)(millis() - timeout) < 0L) //wait for transfer completion
@@ -644,6 +650,9 @@ uint8_t UHS_NI MAX3421E_HOST::dispatchPkt(uint8_t token, uint8_t ep, uint16_t na
                                 if(nak_limit && (nak_count == nak_limit))
                                         return (rcode);
                                 delayMicroseconds(200);
+                                #if defined(__MARLIN_FIRMWARE__)
+                                        marlin_yield();
+                                #endif
                                 break;
                         case UHS_HOST_ERROR_TIMEOUT:
                                 retry_count++;
@@ -694,7 +703,7 @@ UHS_EpInfo * UHS_NI MAX3421E_HOST::ctrlReqOpen(uint8_t addr, uint64_t Request, u
 
 uint8_t UHS_NI MAX3421E_HOST::ctrlReqRead(UHS_EpInfo *pep, uint16_t *left, uint16_t *read, uint16_t nbytes, uint8_t *dataptr) {
         *read = 0;
-        uint16_t nak_limit = USB_HOST_NAK_LIMIT;
+        uint16_t nak_limit = 0;
         MAX_HOST_DEBUG("ctrlReqRead left: %i\r\n", *left);
         if(*left) {
 again:
