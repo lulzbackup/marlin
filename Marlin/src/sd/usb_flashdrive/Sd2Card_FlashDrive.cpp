@@ -62,6 +62,10 @@ void marlin_yield() {
 #define LULZBOT_USB_NO_TEST_UNIT_READY
 #define LULZBOT_SKIP_PAGE3F
 
+// Speed up I/O operations using Marlin functions
+#define UHS_WRITE_SS(v)    WRITE(USB_CS_PIN, v)
+#define UHS_READ_IRQ()     READ(USB_INTR_PIN)
+
 #include "lib/UHS_host/UHS_host.h"
 
 #include "Sd2Card_FlashDrive.h"

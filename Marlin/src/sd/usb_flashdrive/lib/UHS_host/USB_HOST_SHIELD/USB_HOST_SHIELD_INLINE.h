@@ -47,10 +47,10 @@ static void UHS_NI call_ISRodd(void) {
 /* write single byte into MAX3421e register */
 void UHS_NI MAX3421E_HOST::regWr(uint8_t reg, uint8_t data) {
         SPIclass.beginTransaction(MAX3421E_SPI_Settings);
-        UHS_PIN_WRITE(ss_pin, LOW);
+        UHS_WRITE_SS(LOW);
         SPIclass.transfer(reg | 0x02);
         SPIclass.transfer(data);
-        UHS_PIN_WRITE(ss_pin, HIGH);
+        UHS_WRITE_SS(HIGH);
         SPIclass.endTransaction();
 }
 
@@ -60,7 +60,7 @@ void UHS_NI MAX3421E_HOST::regWr(uint8_t reg, uint8_t data) {
 /* returns a pointer to memory position after last written */
 uint8_t* UHS_NI MAX3421E_HOST::bytesWr(uint8_t reg, uint8_t nbytes, uint8_t* data_p) {
         SPIclass.beginTransaction(MAX3421E_SPI_Settings);
-        UHS_PIN_WRITE(ss_pin, LOW);
+        UHS_WRITE_SS(LOW);
         SPIclass.transfer(reg | 0x02);
         //printf("%2.2x :", reg);
 
@@ -70,7 +70,7 @@ uint8_t* UHS_NI MAX3421E_HOST::bytesWr(uint8_t reg, uint8_t nbytes, uint8_t* dat
                 nbytes--;
                 data_p++; // advance data pointer
         }
-        UHS_PIN_WRITE(ss_pin, HIGH);
+        UHS_WRITE_SS(HIGH);
         SPIclass.endTransaction();
         //printf("\r\n");
         return (data_p);
@@ -89,10 +89,10 @@ void UHS_NI MAX3421E_HOST::gpioWr(uint8_t data) {
 /* single host register read    */
 uint8_t UHS_NI MAX3421E_HOST::regRd(uint8_t reg) {
         SPIclass.beginTransaction(MAX3421E_SPI_Settings);
-        UHS_PIN_WRITE(ss_pin, LOW);
+        UHS_WRITE_SS(LOW);
         SPIclass.transfer(reg);
         uint8_t rv = SPIclass.transfer(0);
-        UHS_PIN_WRITE(ss_pin, HIGH);
+        UHS_WRITE_SS(HIGH);
         SPIclass.endTransaction();
         return (rv);
 }
@@ -101,13 +101,13 @@ uint8_t UHS_NI MAX3421E_HOST::regRd(uint8_t reg) {
 /* returns a pointer to a memory position after last read   */
 uint8_t* UHS_NI MAX3421E_HOST::bytesRd(uint8_t reg, uint8_t nbytes, uint8_t* data_p) {
         SPIclass.beginTransaction(MAX3421E_SPI_Settings);
-        UHS_PIN_WRITE(ss_pin, LOW);
+        UHS_WRITE_SS(LOW);
         SPIclass.transfer(reg);
         while(nbytes) {
                 *data_p++ = SPIclass.transfer(0);
                 nbytes--;
         }
-        UHS_PIN_WRITE(ss_pin, HIGH);
+        UHS_WRITE_SS(HIGH);
         SPIclass.endTransaction();
         return ( data_p);
 }
@@ -282,7 +282,7 @@ int16_t UHS_NI MAX3421E_HOST::Init(int16_t mseconds) {
                 pinMode(irq_pin, INPUT_PULLUP);
         //UHS_PIN_WRITE(irq_pin, HIGH);
         pinMode(ss_pin, OUTPUT);
-        UHS_PIN_WRITE(ss_pin, HIGH);
+        UHS_WRITE_SS(HIGH);
 
 #ifdef USB_HOST_SHIELD_TIMING_PIN
         pinMode(USB_HOST_SHIELD_TIMING_PIN, OUTPUT);
@@ -918,7 +918,7 @@ void UHS_NI MAX3421E_HOST::ISRTask(void)
 {
         DDSB();
 
-        if(!UHS_PIN_READ(irq_pin)) {
+        if(!UHS_READ_IRQ()) {
                 uint8_t HIRQALL = regRd(rHIRQ); //determine interrupt source
                 uint8_t HIRQ = HIRQALL & IRQ_CHECK_MASK;
                 uint8_t HIRQ_sendback = 0x00;
@@ -975,6 +975,7 @@ void UHS_NI MAX3421E_HOST::ISRTask(void)
                 //        usb_task_polling_disabled? "T" : "F");
                 DDSB();
                 regWr(rHIRQ, HIRQ_sendback);
+
                 if(sof_timer.expired() && !counted && !usb_task_polling_disabled) {
                         DisablePoll();
                         //usb_task_polling_disabled++;
