@@ -28,7 +28,7 @@
 
 namespace FTDI {
   #if !defined(CLCD_USE_SOFT_SPI)
-    SPISettings SPI::spi_settings(SPI_SPEED, MSBFIRST, SPI_MODE0);
+    SPISettings SPI::spi_settings(SPI_FREQUENCY, MSBFIRST, SPI_MODE0);
   #endif
 
   void SPI::spi_init (void) {
