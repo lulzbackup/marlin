@@ -329,6 +329,7 @@
     #define LCD_480x272
     #define LULZBOT_SDSUPPORT
     #define LULZBOT_USB_FLASH_DRIVE_SUPPORT
+    #define LULZBOT_USB_USE_UHS3
     #define LULZBOT_MANUAL_USB_STARTUP
 #endif
 
@@ -359,6 +360,7 @@
     #define LCD_480x272
     #define LULZBOT_SDSUPPORT
     #define LULZBOT_USB_FLASH_DRIVE_SUPPORT
+    #define LULZBOT_USB_USE_UHS3
     #define LULZBOT_MANUAL_USB_STARTUP
 #endif
 

@@ -48,37 +48,51 @@
 #define LOAD_USB_HOST_SHIELD
 #define LOAD_UHS_BULK_STORAGE
 
-#define NO_AUTO_SPEED
-#define UHS_MAX3421E_SPD 8000000 >> SPI_SPEED
-#define UHS_DEVICE_WINDOWS_USB_SPEC_VIOLATION_DESCRIPTOR_DEVICE 1
-#define UHS_HOST_MAX_INTERFACE_DRIVERS 2
-#define MASS_MAX_SUPPORTED_LUN 1
-#define USB_HOST_SERIAL MYSERIAL0
+static_assert(USB_CS_PIN   != -1, "USB_CS_PIN must be defined");
+static_assert(USB_INTR_PIN != -1, "USB_INTR_PIN must be defined");
 
-// Workarounds for keeping Marlin's watchdog timer from barking...
-void marlin_yield() {
-  thermalManager.manage_heater();
-}
-#define LULZBOT_USB_NO_TEST_UNIT_READY
-#define LULZBOT_SKIP_PAGE3F
+#if defined(LULZBOT_USB_USE_UHS3)
+  #define NO_AUTO_SPEED
+  #define UHS_MAX3421E_SPD 8000000 >> SPI_SPEED
+  #define UHS_DEVICE_WINDOWS_USB_SPEC_VIOLATION_DESCRIPTOR_DEVICE 1
+  #define UHS_HOST_MAX_INTERFACE_DRIVERS 2
+  #define MASS_MAX_SUPPORTED_LUN 1
+  #define USB_HOST_SERIAL MYSERIAL0
 
-// Speed up I/O operations using Marlin functions
-#define UHS_WRITE_SS(v)    WRITE(USB_CS_PIN, v)
-#define UHS_READ_IRQ()     READ(USB_INTR_PIN)
+  // Workarounds for keeping Marlin's watchdog timer from barking...
+  void marlin_yield() {
+    thermalManager.manage_heater();
+  }
+  #define LULZBOT_USB_NO_TEST_UNIT_READY
+  #define LULZBOT_SKIP_PAGE3F
 
-#include "lib/UHS_host/UHS_host.h"
+  // Speed up I/O operations using Marlin functions
+  #define UHS_WRITE_SS(v)    WRITE(USB_CS_PIN, v)
+  #define UHS_READ_IRQ()     READ(USB_INTR_PIN)
+
+  #include "lib-uhs3/UHS_host/UHS_host.h"
+
+  MAX3421E_HOST usb(USB_CS_PIN, USB_INTR_PIN);
+  UHS_Bulk_Storage bulk(&usb);
+
+  #define UHS_START  usb.Init
+  #define UHS_STATE(state) UHS_USB_HOST_STATE_##state
+#else
+  #include "lib-uhs2/Usb.h"
+  #include "lib-uhs2/masstorage.h"
+
+  USB usb;
+  BulkOnly bulk(&usb);
+
+  #define UHS_START  usb.start
+  #define UHS_STATE(state) USB_STATE_##state
+#endif
 
 #include "Sd2Card_FlashDrive.h"
 
 #if EITHER(ULTRA_LCD, EXTENSIBLE_UI)
   #include "../../lcd/ultralcd.h"
 #endif
-
-static_assert(USB_CS_PIN   != -1, "USB_CS_PIN must be defined");
-static_assert(USB_INTR_PIN != -1, "USB_INTR_PIN must be defined");
-
-MAX3421E_HOST usb(USB_CS_PIN, USB_INTR_PIN);
-UHS_Bulk_Storage bulk(&usb);
 
 static enum {
   UNINITIALIZED,
@@ -96,7 +110,7 @@ static enum {
 bool Sd2Card::usbStartup() {
   if(state <= DO_STARTUP) {
     SERIAL_ECHOPGM("Starting USB host...");
-    if (usb.Init() != 0) {
+    if (UHS_START() != 0) {
       SERIAL_ECHOLNPGM(" failed.");
       #if EITHER(ULTRA_LCD, EXTENSIBLE_UI)
         LCD_MESSAGEPGM("USB start failed");
@@ -131,18 +145,18 @@ void Sd2Card::idle() {
       static uint8_t laststate = 232;
       if(task_state != laststate) {
         laststate = task_state;
-        #define UHS_USB_DEBUG(x) case x: SERIAL_ECHOLNPGM(#x); break
+        #define UHS_USB_DEBUG(x) case x: SERIAL_ECHOLNPGM(UHS_STATE(x)); break
         switch(task_state) {
-          UHS_USB_DEBUG(UHS_USB_HOST_STATE_IDLE);
-          UHS_USB_DEBUG(UHS_USB_HOST_STATE_RESET_DEVICE);
-          UHS_USB_DEBUG(UHS_USB_HOST_STATE_RESET_NOT_COMPLETE);
-          UHS_USB_DEBUG(UHS_USB_HOST_STATE_DEBOUNCE);
-          UHS_USB_DEBUG(UHS_USB_HOST_STATE_DEBOUNCE_NOT_COMPLETE);
-          UHS_USB_DEBUG(UHS_USB_HOST_STATE_WAIT_SOF);
-          UHS_USB_DEBUG(UHS_USB_HOST_STATE_ERROR);
-          UHS_USB_DEBUG(UHS_USB_HOST_STATE_CONFIGURING);
-          UHS_USB_DEBUG(UHS_USB_HOST_STATE_CONFIGURING_DONE);
-          UHS_USB_DEBUG(UHS_USB_HOST_STATE_RUNNING);
+          UHS_USB_DEBUG(IDLE);
+          UHS_USB_DEBUG(RESET_DEVICE);
+          UHS_USB_DEBUG(RESET_NOT_COMPLETE);
+          UHS_USB_DEBUG(DEBOUNCE);
+          UHS_USB_DEBUG(DEBOUNCE_NOT_COMPLETE);
+          UHS_USB_DEBUG(WAIT_SOF);
+          UHS_USB_DEBUG(ERROR);
+          UHS_USB_DEBUG(CONFIGURING);
+          UHS_USB_DEBUG(CONFIGURING_DONE);
+          UHS_USB_DEBUG(RUNNING);
           default:
             SERIAL_ECHOLNPAIR("UHS_USB_HOST_STATE: ", task_state);
             break;
@@ -171,7 +185,7 @@ void Sd2Card::idle() {
         break;
 
       case WAIT_FOR_DEVICE:
-        if(task_state == UHS_USB_HOST_STATE_RUNNING) {
+        if(task_state == UHS_STATE(RUNNING)) {
           #if USB_DEBUG >= 1
             SERIAL_ECHOLNPGM("USB device inserted");
           #endif
@@ -185,9 +199,11 @@ void Sd2Card::idle() {
         if(bulk.LUNIsGood(0)) {
           GOTO_STATE_AFTER_DELAY( MEDIA_READY, 100 );
         } else {
-          // Make sure we catch disconnect events
-          usb.busprobe();
-          usb.VBUS_changed();
+          #if defined(LULZBOT_USB_USE_UHS3)
+            // Make sure we catch disconnect events
+            usb.busprobe();
+            usb.VBUS_changed();
+          #endif
           #if USB_DEBUG >= 1
             SERIAL_ECHOLNPGM("Waiting for media");
           #endif
@@ -205,7 +221,7 @@ void Sd2Card::idle() {
         break;
     }
 
-    if(state > WAIT_FOR_DEVICE && task_state != UHS_USB_HOST_STATE_RUNNING) {
+    if(state > WAIT_FOR_DEVICE && task_state != UHS_STATE(RUNNING)) {
       // Handle device removal events
       #if USB_DEBUG >= 1
         SERIAL_ECHOLNPGM("USB device removed");
@@ -228,7 +244,7 @@ void Sd2Card::idle() {
       GOTO_STATE_AFTER_DELAY( WAIT_FOR_DEVICE, 0 );
     }
 
-    else if(task_state == UHS_USB_HOST_STATE_ERROR) {
+    else if(task_state == UHS_STATE(ERROR)) {
         #if EITHER(ULTRA_LCD, EXTENSIBLE_UI)
           LCD_MESSAGEPGM("Media read error");
         #endif
